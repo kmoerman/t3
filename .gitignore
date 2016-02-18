@@ -3,3 +3,7 @@ node_modules
 
 # MAC OS X
 .DS_Store
+
+# XCode
+*.xcodeproj/*
+!*.xcodeproj/*.pbxproj
