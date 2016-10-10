@@ -1,9 +1,25 @@
 
-var T3 = require('../t3.js');
+var isNodeJS = (typeof module !== typeof (void 0) && module.exports)
 
-var Benchmark = require('benchmark');
-var lipsum    = require('lorem-ipsum');
-var sprintf   = require('sprintf-js').sprintf;
+if (isNodeJS)
+  var Benchmark = require('benchmark');
+
+//var lipsum = require('lorem-ipsum');
+var words    = require('random-words');
+var sprintf  = require('sprintf-js').sprintf;
+
+
+
+var H0 = require('../h0.js');
+//var T3 = require('../t3.js'); 
+//var T4 = require('../t4.js'); // outperforms t3 by factor of 0.25
+//var T5 = require('../t5.js');
+//var T7 = require('../t7.js');   // outperforms t4,t5 by factor of 10; no remove method
+var T8  = require('../t8.js');
+//var T11 = require('../t11.js');
+
+
+var Ts = [H0,T8/*,T11*/]//.map(function (m) { return require('../' + m); });
 
 
 // https://bost.ocks.org/mike/shuffle/compare.html
@@ -21,16 +37,7 @@ function shuffle (array) {
 
 
 // INSERT
-function insertH (arr, i, n) {
-  var h = {};
-  for (; i < n; ++i)
-    h[arr[i]] = true;
-  return h;
-}
-
-
-function insertT (arr, i, n) {
-  var t = T3.empty();
+function insertT (arr, i, n, t) {
   for(;i < n; ++i)
     t.insert(arr[i]);
   return t;
@@ -38,13 +45,6 @@ function insertT (arr, i, n) {
 
 
 // LOOKUP
-function lookupH (arr, i, n, h) {
-  var k = 0;
-  for (; i < n; ++i)
-    if (arr[i] in h) ++k;
-  return k;
-}
-
 function lookupT (arr, i, n, t) {
   var k = 0;
   for (; i < n; ++i)
@@ -53,56 +53,92 @@ function lookupT (arr, i, n, t) {
 }
 
 
-// KEYGEN
-function keygenH (h) {
-  return Object.keys(h);
+// REMOVE
+function removeT (arr, i, n, t) {
+  var k = 0;
+  for (; i < n; ++i)
+    t.remove(arr[i]);
 }
-
-function keygenT (t) {
-  return t.toArray();
-}
-
 
 
 // setup the test input
-var A = lipsum({count: 2000, units: 'words'}).split(' ');
-var n = A.length;
-var p = 0.8;
-var m = Math.floor(n * p);
+//var A = lipsum({count: 10000, units: 'sentences', sentenceLowerBound: 1, sentenceUpperBound: 10}).split('. ');
+//var A = lipsum({count: 10000, units: 'words'}).split(' ');
+const N = 10000;
+var A = words(N); // TODO add some duplication
+
+// T7 a little slower than H0 or plain hash with words, but same order of magnitude
+// T7 much slower than H0 for sentences, 2 orders of magnitude
 
 
-// setup the tests
-var insert = new Benchmark.Suite ('INSERT (' + m + ')');
-var lookup = new Benchmark.Suite ('LOOKUP (' + n + ')');
-var genkey = new Benchmark.Suite ('GENKEY (' + m + ')');
+const P = 0.8;
+const M = Math.floor(N * P);
 
-var h, t;
+const Q = 0.8;
+const O = Math.floor(N * Q);
 
-insert
-  .add('hash', function () { h = insertH(A, 0, m); })
-  .add('tern', function () { t = insertT(A, 0, m); });
+const UA = Math.floor(N * 0.3);
+const UB = Math.floor(N * 0.5);
 
-lookup
-  .on('start', function () { shuffle(A); });
+var insert = new Benchmark.Suite ('INSERT (' + M + ')');
+var lookup = new Benchmark.Suite ('LOOKUP (' + N + ')');
+var remove = new Benchmark.Suite ('REMOVE (' + O + ')');
+var keygen = new Benchmark.Suite ('KEYGEN (' + M + ')');
+var union  = new Benchmark.Suite ('UNION  (' + UA + ', ' + UB +')');
 
-lookup
-  .add('hash', function () { lookupH(A, 0, n, h); })
-  .add('tern', function () { lookupT(A, 0, n, t); });
+var tests = [ insert
+            , lookup
+            , remove
+            //, keygen
+            //, union
+            ];
 
-genkey
-  .add('hash', function () { var k = keygenH(h); })
-  .add('test', function () { var k = keygenT(t); });
+var a = [], b = [], k = [], u =[];
 
+tests.forEach(function (t) { t.on('cycle', function () { shuffle(A); }); });
+
+
+Ts.forEach(function (t, i) {
+  var f = name(t);
+
+  insert.add(f + ' ', function () { a[i] = insertT(A, 0, M, t.empty()); });
+
+  lookup.add(f + ' ', function () { lookupT(A, 0, N, a[i]);             });
+
+  remove.add(f + ' ', function () { removeT(A, 0, O, a[i]);             }
+          
+            , {onCycle : function () {
+                a[i] = insertT(A, 0, M, t.empty()); } } );
+
+  //keygen.add(f + ' ', function () { k[i] = a[i].keys(); },
+  //           {onCycle : function () { a[i] = insertT(A, 0, M, t.empty()); }});
+  
+  union.add(f + ' ', function () { u[i] = a[i].union(b[i]);  },
+             {onStart : function () { a[i] = insertT(A, 0, UA, t.empty());
+                                      shuffle(A);
+                                      b[i] = insertT(A, 0, UB, t.empty());
+                                      } /*,
+
+              onCycle : function () { a[i] = insertT(A, 0, UA, t.empty());
+                                      shuffle(A);
+                                      b[i] = insertT(A, 0, UB, t.empty()); } */ }  ); 
+});
+
+function name (f) {
+  return /function ([^\(]+)/.exec(f.prototype.constructor.toString())[1];
+}
 
 function complete () {
   console.log(this.name);
   this.each(function (b) { 
     var s = b.stats;
-    console.log(sprintf(' %s : mean %0.10f , σ %0.11f', b.name, s.mean, s.deviation));
+    console.log(sprintf(' %.3s : mean %0.5f , +/- %0.2f%%',
+                        b.name, s.mean, s.rme));
   });
 }
 
 
-[insert,lookup,genkey]
-  .forEach(function (s) { s.on('complete', complete).run(); });
+tests.forEach(function (t) { t.on('complete', complete)
+                              .run(); });
+
 

@@ -8,8 +8,10 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "ascii-histogram": "^1.2.1",
     "benchmark": "^2.1.0",
     "lorem-ipsum": "^1.0.3",
+    "random-words": "0.0.1",
     "sprintf-js": "^1.0.3"
   },
   "scripts": {

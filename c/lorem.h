@@ -1,19 +1,10 @@
-<!doctype html>
 
-<html>
-  <head>
-    <title>t3.js functionality</title>
-  </head>
-  
-  <body>
+#include "t3.h"
 
-    <script src=t11.js></script>
-    <script>
+static const siz_t N = 100;
 
-    var TT = T11;
-
-    var lorem = 
-    ["irure"
+str_p s[N] =
+{"irure"
 ,"excepteur"
 ,"elit"
 ,"pariatur"
@@ -113,29 +104,4 @@
 ,"sint"
 ,"officia"
 ,"commodo"
-];
-
-var arrayUnique = function(a) {
-    return a.reduce(function(p, c) {
-        if (p.indexOf(c) < 0) p.push(c);
-        return p;
-    }, []);
 };
-
-//lorem = arrayUnique(lorem);
-
-var p = 0.8;
-
-//given list above: should be size of unique lorem (52)
-function fill (t) { for (var j = 0, m = lorem.length; j < m; ++j) t.insert(lorem[j]); return t; }
-
-function check (t) {  for (var j = 0, m = lorem.length; j < m; ++j) console.log(t.contains(lorem[j]), lorem[j]); }
-
-
-var x = fill(new TT.empty());
-//check(x);
-console.log('array size', lorem.length);
-console.log('tri size', x.size());
-
-</script></body>
-</html>

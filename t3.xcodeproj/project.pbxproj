@@ -6,6 +6,11 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D04A926D1C761A6200B90714 /* t3.c in Sources */ = {isa = PBXBuildFile; fileRef = D04A926C1C761A6200B90714 /* t3.c */; };
+		D0C75F671C88093800878CF9 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = D0C75F661C88093800878CF9 /* test.c */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		D011F36E1C761073000976FA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,7 +25,10 @@
 
 /* Begin PBXFileReference section */
 		D011F3701C761073000976FA /* t3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = t3; sourceTree = BUILT_PRODUCTS_DIR; };
-		D086AED91C7617C1005F7CF7 /* c */ = {isa = PBXFileReference; lastKnownFileType = folder; path = c; sourceTree = "<group>"; };
+		D04A926C1C761A6200B90714 /* t3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = t3.c; path = c/t3.c; sourceTree = "<group>"; };
+		D04A926E1C761A7500B90714 /* t3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = t3.h; path = c/t3.h; sourceTree = "<group>"; };
+		D0C75F661C88093800878CF9 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = c/test.c; sourceTree = "<group>"; };
+		D0C75F6D1C88614C00878CF9 /* lorem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lorem.h; path = c/lorem.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +45,10 @@
 		D011F3671C761073000976FA = {
 			isa = PBXGroup;
 			children = (
-				D086AED91C7617C1005F7CF7 /* c */,
+				D04A926E1C761A7500B90714 /* t3.h */,
+				D04A926C1C761A6200B90714 /* t3.c */,
+				D0C75F661C88093800878CF9 /* test.c */,
+				D0C75F6D1C88614C00878CF9 /* lorem.h */,
 				D011F3711C761073000976FA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,6 +118,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D04A926D1C761A6200B90714 /* t3.c in Sources */,
+				D0C75F671C88093800878CF9 /* test.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +208,8 @@
 		D011F3781C761073000976FA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -202,6 +217,8 @@
 		D011F3791C761073000976FA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

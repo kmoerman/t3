@@ -22,8 +22,6 @@ function chain (child, parent) {
 // by emscripten; the code has been written with
 // a distinct C flavor to ease the transition. 
 
-module.exports = T3;
-
 
 // Type of ternary trees
 function T3 () {
@@ -216,6 +214,7 @@ T3.prototype.toArrayStk = function (s) {
 }
 
 
+/*
 
 // Deutsch-Schorr-Waite traversal
 T3.prototype.toArrayDSW = function () {
@@ -238,7 +237,7 @@ T3.prototype.toArrayDSW = function () {
   while (notFinished()) {
 
     switch (state()) {
-    /* NODES */
+    //NODES
       // node first visit
       case 0 : goDownLeft();
 
@@ -252,7 +251,7 @@ T3.prototype.toArrayDSW = function () {
       case 3 :
 
 
-    /* EPSILONS */
+    // EPSILONS
       // epsilon first visit
       case 4 : if (t.tree === null) goUpFromEpsilon();
                else { goDownFromEpsilon();
@@ -363,3 +362,8 @@ T3.prototype.toArrayDSW = function () {
 
 }
 
+*/
+
+
+
+module.exports = T3;
